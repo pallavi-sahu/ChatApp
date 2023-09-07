@@ -7,7 +7,9 @@ import MicIcon from '@mui/icons-material/Mic';
 import { useParams } from 'react-router-dom';
 import db from './firebase';
 import { useStateValue } from './StateProvider';
-import firebase from 'firebase';
+// import firebase from './firebase';
+import { serverTimestamp } from '@firebase/firestore'
+
 function Chat() {
 
 const [seed, setseed] = useState("");
@@ -43,7 +45,8 @@ const sendMessage = (e) => {
         db.collection('rooms').doc(roomId).collection('massages').add({
             massage:input,
             name: user.displayName,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            timestamp: serverTimestamp()
+
         })
         setinput("");
 }
@@ -55,7 +58,11 @@ const sendMessage = (e) => {
             <Avatar src={`https://api.dicebear.com/api/human/${seed}.svg`}/>
             <div className='chat_headerinfo'>
                 <h3>{roomName}</h3>
-                <p>last seen...</p>
+                <p>last seen {" "}{
+                    new Date(
+                        massages[massages.length-1]?.timestamp?.toDate()
+                    ).toUTCString()}
+                </p>
             </div>
 
             <div className='chat_headerRight'>
